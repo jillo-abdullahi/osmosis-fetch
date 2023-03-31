@@ -37,17 +37,17 @@ export default async function Home() {
   const data = await getData();
 
   // table headers
-  const headers = [
-    "",
-    "Asset",
-    "Borrow rate",
-    "Deposit Cap",
-    "Total Deposits",
-    "",
-  ];
+  const headers = ["", "Asset", "Borrow rate", "Deposit Cap", , ""];
 
   return (
-    <div className="w-full min-h-screen h-full flex items-start justify-center px-3 md:px-24 pb-20">
+    <div
+      className="w-full min-h-screen h-full flex items-start justify-center px-3 md:px-24 pb-20"
+      style={{
+        backgroundImage: "url('/icon-bg.svg')",
+        backgroundRepeat: "no-repeat",
+        backgroundColor: "#562a3b",
+      }}
+    >
       <div className="w-full min-w-3xl h-full flex flex-col items-center justify-start pt-10 space-y-6">
         <Image src="/icon-mars.svg" width={200} height={200} alt="mars" />
         <h1 className="text-5xl font-semibold tracking-widest text-center">
@@ -57,7 +57,7 @@ export default async function Home() {
           LEND AND BORROW MONEY ON THE OSMOSIS BLOCKCHAIN
         </h2>
 
-        <div className="w-full max-w-768 rounded-2xl border-8 border-red-100 bg-gradient-to-br from-red-200 to-red-100 pb-6">
+        <div className="w-full max-w-610 rounded-2xl border-8 border-red-100 bg-gradient-to-br from-red-200 to-red-100 pb-6">
           <h3 className="text-2xl font-light tracking-widest text-center border-b border-gray-border py-6">
             DEPOSITS
           </h3>
@@ -134,9 +134,7 @@ export default async function Home() {
                         {parseFloat(deposit_cap).toLocaleString("en-US")}
                       </div>
                     </td>
-                    <td>
-                      <div className="py-4 text-right">1961</div>
-                    </td>
+
                     <td>
                       <div className="py-4 px-6 text-right">
                         <button>

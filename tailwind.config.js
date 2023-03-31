@@ -17,14 +17,14 @@ module.exports = {
           300: "#0E111B",
         },
         gray: {
-          'border': '#ffffff33',
-          'border-light': '#ffffff66',
-          'border-dark': '#ffffff99',
-        }
+          border: "#ffffff33",
+          "border-light": "#ffffff66",
+          "border-dark": "#ffffff99",
+        },
       },
       maxWidth: {
-        '768': '48rem',
-      }
+        610: "38.125rem",
+      },
     },
   },
   plugins: [],
