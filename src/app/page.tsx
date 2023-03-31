@@ -1,91 +1,161 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from './page.module.css'
+import Image from "next/image";
 
-const inter = Inter({ subsets: ['latin'] })
+async function getData() {
+  const res = await fetch("http://localhost:3000/api/assets");
+  const data = await res.json();
 
-export default function Home() {
+  // append more asset details like name and symbol
+  // since we don't have a way to get this from the API/contract
+  let assets = [];
+  if (data.length > 0) {
+    assets = data.map((asset: any) => {
+      const { denom } = asset;
+      if (denom === "uosmo") {
+        return { ...asset, name: "Osmosis", symbol: "OSMO", icon: "icon-osmo" };
+      } else if (
+        denom ===
+        "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2"
+      ) {
+        return {
+          ...asset,
+          name: "Cosmos Hub",
+          symbol: "ATOM",
+          icon: "icon-atom",
+        };
+      } else if (
+        denom ===
+        "ibc/46B44899322F3CD854D2D46DEEF881958467CDD4B3B10086DA49296BBED94BED"
+      ) {
+        return { ...asset, name: "Juno", symbol: "JUNO", icon: "icon-juno" };
+      }
+    });
+  }
+  return assets;
+}
+
+export default async function Home() {
+  const data = await getData();
+
+  // table headers
+  const headers = [
+    "",
+    "Asset",
+    "Borrow rate",
+    "Deposit Cap",
+    "Total Deposits",
+    "",
+  ];
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className="w-full min-h-screen h-full flex items-start justify-center px-3 md:px-24 pb-20">
+      <div className="w-full min-w-3xl h-full flex flex-col items-center justify-start pt-10 space-y-6">
+        <Image src="/icon-mars.svg" width={200} height={200} alt="mars" />
+        <h1 className="text-5xl font-semibold tracking-widest text-center">
+          WELCOME TO THE RED BANK
+        </h1>
+        <h2 className="text-2xl font-light tracking-widest text-center">
+          LEND AND BORROW MONEY ON THE OSMOSIS BLOCKCHAIN
+        </h2>
+
+        <div className="w-full max-w-768 rounded-2xl border-8 border-red-100 bg-gradient-to-br from-red-200 to-red-100 pb-6">
+          <h3 className="text-2xl font-light tracking-widest text-center border-b border-gray-border py-6">
+            DEPOSITS
+          </h3>
+          <table className="table-auto w-full ">
+            <thead>
+              <tr className="text-xs font-thin">
+                {headers.map((title, index) => (
+                  <th
+                    key={index}
+                    className="font-light border-b border-gray-border"
+                  >
+                    <div
+                      className={`w-full flex ${
+                        index < 2 ? "justify-start" : "justify-end"
+                      }`}
+                    >
+                      <button className="flex items-center justify-center py-6 w-fit">
+                        {index > 0 && title && (
+                          <Image
+                            src="/icon-sort-desc.svg"
+                            height={24}
+                            width={24}
+                            alt="sort"
+                          />
+                        )}
+                        <span className="decoration-dotted underline underline-offset-4 text-gray-border-light">
+                          {title}
+                        </span>
+                        {index === 0 && title && (
+                          <Image
+                            src="/icon-sort-desc.svg"
+                            height={24}
+                            width={24}
+                            alt="sort"
+                          />
+                        )}
+                      </button>
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((asset: any, index: number) => {
+                const { name, symbol, icon, borrow_rate, deposit_cap } = asset;
+                return (
+                  <tr
+                    className={`py-4 border-b border-gray-border `}
+                    key={index}
+                  >
+                    <td>
+                      <div className="py-4 px-6 flex text-left w-fit">
+                        <Image
+                          src={`/coins/${icon}.svg`}
+                          height={32}
+                          width={32}
+                          alt=""
+                        />
+                      </div>
+                    </td>
+                    <td>
+                      <div className="py-4 text-left">
+                        <div>{symbol}</div>
+                        <div className="opacity-60">{name}</div>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="py-4 text-right">
+                        {parseFloat(borrow_rate).toFixed(3)}%
+                      </div>
+                    </td>
+                    <td>
+                      <div className="py-4 text-right">
+                        {parseFloat(deposit_cap).toLocaleString("en-US")}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="py-4 text-right">1961</div>
+                    </td>
+                    <td>
+                      <div className="py-4 px-6 text-right">
+                        <button>
+                          <Image
+                            src="/icon-carat.svg"
+                            height={12}
+                            width={12}
+                            alt="carat"
+                          />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
-        </div>
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    </div>
+  );
 }
